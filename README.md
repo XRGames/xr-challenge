@@ -6,7 +6,7 @@ The purpose of this test is to evaluate the candidate’s ability in programming
 ## Mission
 Your mission, should you choose to accept it, is to create a very simple game. This involves player control of an avatar from a top down perspective, collecting stars and reaching an exit. We have made a start for you. After cloning the repository, open up the **Main.unity** scene and get started!
 
-This mission should take you about 1-3 hours. You may, however, spend as much time as you wish on the mission, within the boundary of the deadline - **1 week** from receipt of this document.
+The objectives should take you about 1-3 hours. You may, however, spend as much time as you wish within the boundary of the deadline to embellish your demo. The deadline is **1 week** from receipt of this document.
 
 ### Objectives
 * Implement simple character movement using WASD;
