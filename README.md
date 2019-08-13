@@ -10,7 +10,7 @@ The objectives should take you about 1-3 hours. You may, however, spend as much 
 
 ### Objectives
 * Implement simple character movement using WASD;
-* Add 4 walls so the player is restricted to the level boundaries;
+* Add some walls so the player is restricted to the level boundaries;
 * Implement a simple pickup system that adds points when a star is collected;
 * Points are displayed in the UI somewhere;
 * You must have at least 5 pickups in the level;
