@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
+	[Header("Config")]
 	[SerializeField]
 	private int scoreValue;
 	public int ScoreValue => scoreValue;
 
-	[SerializeField, Tooltip("Your")]
+	[Header("References")]
+	[SerializeField]
 	private PickupAnimator animator;
 
 	/// <summary>
@@ -30,7 +32,7 @@ public class Pickup : MonoBehaviour
 	{
 		IsCollected = false;
 		OnPickUp = null;
-		animator.enabled = true;
+		animator.PlayIdle();
 	}
 
 	/// <summary>
@@ -49,6 +51,7 @@ public class Pickup : MonoBehaviour
 	private void HandleOnPickedUp()
 	{
 		IsCollected = true;
+		animator.PlayCollected();
 		OnPickUp?.Invoke(this);
 	}
 }
