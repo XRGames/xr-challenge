@@ -43,12 +43,12 @@ public class Pickup : MonoBehaviour
 	{
 		if (IsCollected) return -1;
 
-		HandleOnPickedUp();
+		HandlePickedUp();
 
 		return ScoreValue;
 	}
 
-	private void HandleOnPickedUp()
+	private void HandlePickedUp()
 	{
 		IsCollected = true;
 		animator.PlayCollected();

@@ -13,7 +13,7 @@ The objectives should take you about 1-3 hours. You may, however, spend as much 
 * Implement a simple pickup system that adds points when a star is collected;
 * Display the player's total score on the GUI;
 * You should place at least 5 pickups in a level;
-* Add some walls so the player is restricted to the level boundaries;
+* Add boundaries so the player is restricted to the level;
 * After all the pickups in the level have been collected, the game can be completed by entering a finish zone;
 * Entering a finish zone before all the pickups are collected should not complete the game;
 * Demonstrate good use of git.

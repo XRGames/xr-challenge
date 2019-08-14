@@ -13,6 +13,9 @@ public class PickupAnimator : MonoBehaviour
 	[SerializeField]
 	private ParticleSystem collectEffect;
 
+	/// <summary>
+	/// Play the idle animation and effects.
+	/// </summary>
 	public void PlayIdle()
 	{
 		enabled = true;
@@ -20,6 +23,9 @@ public class PickupAnimator : MonoBehaviour
 		idleEffect.Play();
 	}
 
+	/// <summary>
+	/// Play the collected animation and effects.
+	/// </summary>
 	public void PlayCollected()
 	{
 		enabled = false;
