@@ -3,35 +3,55 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-	[SerializeField]
-	private Transform model;
-
+	[Header("Config")]
 	[SerializeField]
 	private int scoreValue;
 	public int ScoreValue => scoreValue;
 
+	[Header("References")]
+	[SerializeField]
+	private PickupAnimator animator;
+
+	/// <summary>
+	/// Indicates if the Pickup has been collected or not
+	/// </summary>
 	public bool IsCollected { get; private set; }
 
 	public event Action<Pickup> OnPickUp;
 
-	private void OnTriggerEnter(Collider other)
+	private void Start()
 	{
-		HandleOnPickedUp();
+		Init();
 	}
 
-	private void HandleOnPickedUp()
+	/// <summary>
+	/// Initialise and reset the properties.
+	/// Make the Pickup available again.
+	/// </summary>
+	public void Init()
 	{
-		if (IsCollected) return;
+		IsCollected = false;
+		OnPickUp = null;
+		animator.PlayIdle();
+	}
 
-		OnPickUp?.Invoke(this);
+	/// <summary>
+	/// Pick up the pickup.
+	/// </summary>
+	/// <returns>The score. Return -1 if failed to collect.</returns>
+	public int GetPickedUp()
+	{
+		if (IsCollected) return -1;
+
+		HandlePickedUp();
+
+		return ScoreValue;
+	}
+
+	private void HandlePickedUp()
+	{
 		IsCollected = true;
-	}
-
-	private void Update()
-	{
-		if (IsCollected) return;
-
-		model.localPosition = new Vector3(0f, Mathf.Lerp(0.35f, 0.55f, (Mathf.Sin(Time.time * 3f) + 1f) * 0.5f), 0f);
-		model.localEulerAngles = new Vector3(0f, Time.time * 180f % 360f, 0f);
+		animator.PlayCollected();
+		OnPickUp?.Invoke(this);
 	}
 }

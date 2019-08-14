@@ -10,12 +10,12 @@ The objectives should take you about 1-3 hours. You may, however, spend as much 
 
 ### Objectives
 * Implement simple character movement using WASD;
-* Add 4 walls so the player is restricted to the level boundaries;
 * Implement a simple pickup system that adds points when a star is collected;
-* Points are displayed in the UI somewhere;
-* You must have at least 5 pickups in the level;
-* After all the pickups in the level have been collected, the game can be completed by entering the finish zone;
-* Entering the finish zone before all the pickups are collected will not complete the game;
+* Display the player's total score on the GUI;
+* You should place at least 5 pickups in a level;
+* Add boundaries so the player is restricted to the level;
+* After all the pickups in the level have been collected, the game can be completed by entering a finish zone;
+* Entering a finish zone before all the pickups are collected should not complete the game;
 * Demonstrate good use of git.
 
 ### Restrictions
