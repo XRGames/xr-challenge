@@ -6,6 +6,8 @@
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
 
 # OS X only:
 .DS_Store
