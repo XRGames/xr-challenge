@@ -1,7 +1,7 @@
 # XR Games Developer Challenge
 
 ## Brief
-The purpose of this test is to evaluate the candidate’s ability in programming, use of unity, skill with git and appetite for making games.
+The purpose of this test is to evaluate the candidate’s ability in programming, use of Unity, skill with Git and appetite for making games.
 
 ## Mission
 Your mission, should you choose to accept it, is to create a very simple game. This involves player control of an avatar from a top down perspective, collecting stars and reaching an exit. We have made a start for you. After cloning the repository, open up the **Main.unity** scene and get started!
@@ -10,7 +10,7 @@ The objectives should take you about 1-3 hours. You may, however, spend as much 
 
 ### Objectives
 * Implement simple character movement using WASD;
-* Implement a simple pickup system that adds points when a star is collected;
+* Implement a pickup system that adds points when a star is collected;
 * Display the player's total score on the GUI;
 * You should place at least 5 pickups in a level;
 * Add boundaries so the player is restricted to the level;
@@ -27,9 +27,9 @@ Feel free to embellish your game within the time allowed. Below are some example
 
 * A full game loop. i.e. Start → Play → Win/Lose → Restart
 * Enemies/Hazards and death state.
-* Animations, visual feedbacks, extra GUI elements.
+* Animations, visual feedbacks, additional GUI elements.
 * Character actions e.g. Jumping.
-* Controllers (Xbox/PS4) support.
+* Controllers (i.e. Xbox, DualShock, etc.) support.
 * Some basic audio.
 
 ## Submission
