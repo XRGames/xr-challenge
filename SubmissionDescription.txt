@@ -1,0 +1,6 @@
+Features Implemented:
+Player movement left, right, forward, backward with WASD
+Player Jumping with Space bar
+Camera moves with player
+Pickup 'picked up' when player collides with it
+Score UI changes when pickup 'picked up'
