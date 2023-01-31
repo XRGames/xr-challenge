@@ -2,7 +2,8 @@
     "name": "XR.Player",
     "rootNamespace": "",
     "references": [
-        "GUID:bf009420f90551a4fa7534e507e4453d"
+        "GUID:bf009420f90551a4fa7534e507e4453d",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
