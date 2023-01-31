@@ -10,6 +10,9 @@ namespace XR.Player
 {
     public class PlayerMovement : MonoBehaviour
     {
+        //General
+        private Transform cam;
+
         //Movement
         public float speed = 10;
         //--
@@ -27,6 +30,8 @@ namespace XR.Player
             CheckForController();
 
             movementController = GetComponent<CharacterController>();
+            cam = Camera.main.transform;
+            //camScript = cam.GetComponent<GameCam>();
         }
 
         // Update is called once per frame
@@ -81,7 +86,12 @@ namespace XR.Player
         //Handle main movement
         private void HandleMovement()
         {
-            Vector3 normal_move = (transform.forward * input.y) + (transform.right * input.x);
+            Vector3 cam_forward = cam.forward;
+            Vector3 cam_right = cam.right;
+            cam_forward.y = 0;
+            cam_right.y = 0;
+
+            Vector3 normal_move = (cam_forward * input.y) + (cam_right * input.x);
             Vector3 full_move = normal_move * speed;
             Vector3 move = full_move * Time.deltaTime;
 
