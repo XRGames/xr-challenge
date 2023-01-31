@@ -1,0 +1,16 @@
+{
+    "name": "XR.Player",
+    "rootNamespace": "",
+    "references": [
+        "GUID:bf009420f90551a4fa7534e507e4453d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
