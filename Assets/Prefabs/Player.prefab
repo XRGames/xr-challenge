@@ -161,7 +161,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9104475736416343584}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.13, z: -6.69}
+  m_LocalPosition: {x: 0, y: 3.45, z: -6.69}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -232,6 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lookAt: {fileID: 7073053821795249973}
+  rotateSpeed: 10
   myOffset: {x: 0, y: 0, z: 0}
   curve:
     serializedVersion: 2
@@ -258,5 +259,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   zoomTime: 0.75
-  sensivity_x: 75
-  sensivity_y: 50
+  sensivity_controller_x: 75
+  sensivity_controller_y: 50
+  sensivity_mouse_x: 50
+  sensivity_mouse_y: 75
+  currentX: 0
+  currentY: 0

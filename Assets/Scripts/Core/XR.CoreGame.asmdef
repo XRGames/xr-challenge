@@ -1,0 +1,16 @@
+{
+    "name": "XR.CoreGame",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3eb8d52be2b21fd449d87a9a65a53239"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

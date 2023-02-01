@@ -12,8 +12,6 @@ namespace XR.Player
         //--
         private Gamepad myGamepad;
         private CharacterController controller;
-        private const float YMin = -75.0f; //max y angle
-        private const float YMax = 50.0f; //max x angle
         [SerializeField] private Vector3 myOffset;
 
         //LERP (zoom out cam)
@@ -27,14 +25,15 @@ namespace XR.Player
         private bool isLerpingZoom = false; //Is lerping?
         private float lerpEvaluation; //Current lerp value
         
-        //Controller
-        private float currentX = 0.0f;
-        private float currentY = 0.0f;
+        //Input
+        public int sensivity_controller_x = 75;
+        public int sensivity_controller_y = 50;
+        public int sensivity_mouse_x = 50;
+        public int sensivity_mouse_y = 35;
         //--
-        public int sensivity_x = 75;
-        public int sensivity_y = 50;
+        [SerializeField] private float currentX = 0.0f;
 
-        //Main
+        //--
         void Awake () {
             myOffset = transform.localPosition; //Initial camera offset (set in prefab)
             originalZoomTime = zoomTime + 0;//Store original zoom time (before we modify it)
@@ -52,12 +51,39 @@ namespace XR.Player
         }
 
         //-- -- -- -- --
-        //MAIN CAM METHODS
+        //READ INPUT  --
+        private void ReadControllerInput()
+        {
+            //Stick input this frame
+            currentX += myGamepad.rightStick.x.ReadValue() * sensivity_controller_x * Time.deltaTime;
+    
+            //Clamp angles
+            if (currentX < 0)
+                currentX = 360;
+            else if (currentX > 360)
+                currentX = (currentX - 360);
+        }
+
+        private void ReadMouseInput()
+        {
+            currentX += Input.GetAxis("Mouse X") * sensivity_mouse_x * Time.deltaTime;
+    
+            //Clamp angles
+            if (currentX < 0)
+                currentX = 360 + currentX;
+            else if (currentX > 360)
+                currentX = (currentX - 360);            
+        }
+        //-- -- -- -- -- --
+        //MAIN CAM METHODS-
         //Get intial camera position
         private Vector3 getLookAtPos()
         {
             Vector3 lookAtPos = lookAt.position + (transform.right * myOffset.x);
             lookAtPos.y = lookAt.position.y + myOffset.y;
+
+            Vector3 back_vec = (transform.forward * myOffset.z);
+            lookAtPos += back_vec; //Move camera back by initial z offset
 
             return lookAtPos;
         }
@@ -77,34 +103,20 @@ namespace XR.Player
             lerpStartTime = Time.time;
             isLerpingZoom = true;
         }
-    
-        private void ReadControllerInput()
-        {
-            //Stick input this frame
-            currentX += myGamepad.rightStick.x.ReadValue() * sensivity_x * Time.deltaTime;
-            currentY -= myGamepad.rightStick.y.ReadValue() * sensivity_y * Time.deltaTime;
-    
-            //Clamp angles
-            currentY = Mathf.Clamp(currentY, YMin, YMax);
-            if (currentX < 0)
-                currentX = 360;
-            else if (currentX > 360)
-                currentX = (currentX - 360);
-        }
 
         //Update last after everything 
-        private void LateUpdate()
+        void LateUpdate()
         {
             //Zoom out if player is moving
             float speed = controller.velocity.magnitude;
             float zoomTo = 4;
-            if (speed >= 2 && lerpZoom != 0 && !isLerpingZoom) //if moving, not zoomed out, not currently lerping
+            if (speed >= 2 && lerpZoom != 0) //if moving, not zoomed out, not currently lerping
                 LerpZoom(0, 2);//zoom in all the way (in 2 seconds)
             else if (lerpZoom == 0 && speed < 2) //If not zoomed out, not moving
                 LerpZoom(zoomTo, 2); //Zoom out 4 units
 
-            //-- --
-            //MAIN
+            //-- -- --
+            //MAIN  --
             Vector3 lookAtPos = getLookAtPos(); //Get intial Camera position (initial transform in World Co-ords)
 
             //Lerp zoom
@@ -115,6 +127,7 @@ namespace XR.Player
                 float endTime = lerpStartTime + zoomTime; //End time of lerp
                 float timeLeft = (endTime - Time.time); //Time left
                 float step = Mathf.Clamp((zoomTime - timeLeft)/zoomTime, 0, 1); //Max time - time left (divide by) max time
+
                 step = curve.Evaluate( step ); //Give it a nice animation curve
                 lerpEvaluation = step; //Store our current evaluation in case of zooming during a zoom
 
@@ -128,29 +141,29 @@ namespace XR.Player
             } else {
                 lookAtPos += (transform.forward * lerpZoom);
             }
-            //--
-            Vector3 back_vec = (transform.forward * myOffset.z);
-            lookAtPos += back_vec; //Move camera back by initial z offset
 
-            //-- --
+            //--
             //Rotate based on controller/mouse movement
-            Quaternion rotation = Quaternion.Euler(currentY, currentX, 0); //Mouse/Controller rotation
+            Quaternion rotation = Quaternion.Euler(0, currentX, 0); //Mouse/Controller rotation
             Vector3 Direction = new Vector3(0,0,1); //Z-Axis
 
-            transform.position = lookAtPos + rotation * Direction; //Initial position rotated around z-axis by camera angles
+            transform.position = lookAtPos + rotation * Direction;//Initial position rotated around z-axis by camera angles
             //Pos (initial) + Quaternion(angles) *(multiplied by) Vector Direction 
             //Rotate around by camera angle values
             //-- -- --
-
             //Look at our player every frame
-            transform.LookAt(lookAtPos);
+            transform.LookAt(lookAt.position);
         }
 
         //Read input every frame
-        private void Update()
+        void Update()
         {
             if (myGamepad != null)
                 ReadControllerInput();
+            else
+                ReadMouseInput();
+
+            //CameraUpdate();
         }
     }
 }

@@ -86,8 +86,8 @@ namespace XR.Player
         //Handle main movement
         private void HandleMovement()
         {
-            Vector3 cam_forward = cam.forward;
             Vector3 cam_right = cam.right;
+            Vector3 cam_forward = Vector3.Cross(cam_right, Vector3.up); //Calculate forward as camera forward is messed up in top down
             cam_forward.y = 0;
             cam_right.y = 0;
 
