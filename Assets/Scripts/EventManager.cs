@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class EventManager : MonoBehaviour
 {
-	public delegate void BasicAction(string a);
+	public delegate void BasicAction(string actionName, dynamic dataType);
 	public static event BasicAction BasicEvent;
 
 	[SerializeField]
@@ -107,13 +107,13 @@ public class EventManager : MonoBehaviour
 		switch(actionContext.action.name)
 		{
 			case "Jump":
-				BasicEvent("Input info: " + actionContext.action.name + " " + actionContext.ReadValue<float>());
+				BasicEvent(actionContext.action.name, actionContext.ReadValue<float>());
 				break;
 			case "Sprint":
-				BasicEvent("Input info: " + actionContext.action.name + " " + actionContext.ReadValue<float>());
+				BasicEvent(actionContext.action.name, actionContext.ReadValue<float>());
 				break;
 			case "Walk":
-				BasicEvent("Input info: " + actionContext.action.name + " " + actionContext.ReadValue<Vector2>());
+				BasicEvent(actionContext.action.name, actionContext.ReadValue<Vector2>());
 				break;
 			default:
 				Debug.Log("No valid input type");
