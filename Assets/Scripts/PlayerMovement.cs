@@ -58,6 +58,18 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Update()
 	{
-		RB.velocity = new Vector3(MoveForce.x, 0f, MoveForce.y);
+		if (isJump)
+		{
+			RB.velocity = Vector3.up * 10;
+		}
+
+		if (isSprint)
+		{
+			RB.velocity = new Vector3(MoveForce.x * 2, RB.velocity.y, MoveForce.y * 2);
+		}
+		else
+		{
+			RB.velocity = new Vector3(MoveForce.x, RB.velocity.y, MoveForce.y);
+		}
 	}
 }
