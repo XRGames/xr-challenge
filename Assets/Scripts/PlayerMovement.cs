@@ -10,27 +10,18 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField]
 	private bool isJump, isSprint;
 
+	[SerializeField]
+	private float MoveMultiplier;
+
 	private Rigidbody RB;
-	void OnEnable()
-	{
-		EventManager.BasicEvent += Response;
-		//do function to enable subscriptions
-	}
-
-
-	void OnDisable()
-	{
-		EventManager.BasicEvent -= Response;
-		//do function which checks if they are full and if so, clear subscriptions
-	}
 
 	private void Awake()
 	{
 		RB = GetComponent<Rigidbody>();
+		MoveMultiplier = 1.0f;
 	}
 
-
-	void Response(string actionName, dynamic dataType)
+	public void UpdateMovement(string actionName, dynamic dataType)
 	{
 		switch (actionName)
 		{
@@ -39,24 +30,27 @@ public class PlayerMovement : MonoBehaviour
 					isJump = true;
 				else
 					isJump = false;
-
 				break;
+
 			case "Sprint":
 				if (dataType == 1)
 					isSprint = true;
 				else
 					isSprint = false;
 				break;
+
 			case "Walk":
 				MoveForce = dataType;
 				break;
+
 			default:
 				Debug.Log("No valid input type");
 				break;
+
 		}
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
 		if (isJump)
 		{
@@ -65,11 +59,11 @@ public class PlayerMovement : MonoBehaviour
 
 		if (isSprint)
 		{
-			RB.velocity = new Vector3(MoveForce.x * 2, RB.velocity.y, MoveForce.y * 2);
+			RB.velocity = new Vector3(MoveForce.x * (MoveMultiplier * 2), RB.velocity.y, MoveForce.y * (MoveMultiplier * 2));
 		}
 		else
 		{
-			RB.velocity = new Vector3(MoveForce.x, RB.velocity.y, MoveForce.y);
+			RB.velocity = new Vector3(MoveForce.x * MoveMultiplier, RB.velocity.y, MoveForce.y * MoveMultiplier);
 		}
 	}
 }
