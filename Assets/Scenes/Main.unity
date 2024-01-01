@@ -1052,7 +1052,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1879566364, guid: 9c436d2eaf5a77e48a26bcbc3a68e3cb, type: 3}
       propertyPath: scoreValue
-      value: 107
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1942245548449254, guid: 9c436d2eaf5a77e48a26bcbc3a68e3cb, type: 3}
       propertyPath: m_Name
@@ -1223,6 +1223,7 @@ MonoBehaviour:
   MoveForce: {x: 0, y: 0}
   isJump: 0
   isSprint: 0
+  MoveMultiplier: 0
 --- !u!54 &1342394707
 Rigidbody:
   m_ObjectHideFlags: 0
