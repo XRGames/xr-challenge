@@ -38,6 +38,9 @@ namespace DanHenshaw
       );
     }
 
+    private void Start() => input.EnablePlayerActions();
+
+
     private void Update()
     {
       HandleMovement();

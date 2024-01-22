@@ -10,22 +10,26 @@ namespace DanHenshaw
   public class InputManager : ScriptableObject, IPlayerActions
   {
     public event UnityAction<Vector2> Move = delegate { };
-    public event UnityAction<Vector3, bool> Look = delegate { };
+    public event UnityAction<Vector2, bool> Look = delegate { };
     public event UnityAction EnableMouseControlCamera = delegate { };
     public event UnityAction DisableMouseControlCamera = delegate { };
 
-    private Controls _controls;
+    private Controls controls;
 
-    public Vector3 Direction => _controls.Player.Move.ReadValue<Vector2>();
+    public Vector3 Direction => controls.Player.Move.ReadValue<Vector2>();
 
     private void OnEnable()
     {
-      if(_controls == null)
+      if(controls == null)
       {
-        _controls = new Controls();
-        _controls.Player.SetCallbacks(this);
+        controls = new Controls();
+        controls.Player.SetCallbacks(this);
       }
-      _controls.Enable();
+    }
+
+    public void EnablePlayerActions()
+    {
+      controls.Enable();
     }
 
     public void OnMove(InputAction.CallbackContext context)
