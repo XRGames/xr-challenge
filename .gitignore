@@ -39,3 +39,6 @@ sysinfo.txt
 .idea
 /[Aa]ssets/[Pp]lugins/[Ee]ditor/JetBrains/
 /[Aa]ssets/[Pp]lugins/[Ee]ditor/JetBrains.meta
+
+# Visual Studio
+/.vs/
