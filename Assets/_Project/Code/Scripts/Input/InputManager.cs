@@ -6,7 +6,8 @@ using static Controls;
 
 namespace DanHenshaw
 {
-  public class InputManager : MonoBehaviour, IPlayerActions
+  [CreateAssetMenu(fileName = "InputManager", menuName = "Custom/Input/InputManager")]
+  public class InputManager : ScriptableObject, IPlayerActions
   {
     public event UnityAction<Vector2> Move = delegate { };
     public event UnityAction<Vector3, bool> Look = delegate { };
