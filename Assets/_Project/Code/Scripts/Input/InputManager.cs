@@ -1,74 +1,88 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using static Controls;
 
-namespace DanHenshaw
+[CreateAssetMenu(fileName = "InputManager", menuName = "Custom/Input/InputManager")]
+public class InputManager : ScriptableObject, IPlayerActions
 {
-  [CreateAssetMenu(fileName = "InputManager", menuName = "Custom/Input/InputManager")]
-  public class InputManager : ScriptableObject, IPlayerActions
+  public event UnityAction<Vector2> Move = delegate { };
+  public event UnityAction Jump = delegate { };
+  public event UnityAction<bool> Slide = delegate { };
+  public event UnityAction<Vector2, bool> Look = delegate { };
+  public event UnityAction LeftClick = delegate { };
+  public event UnityAction RightClick = delegate { };
+
+  private Controls controls;
+
+  public Vector2 Direction => controls.Player.Move.ReadValue<Vector2>();
+  public Vector2 Mouse => controls.Player.Look.ReadValue<Vector2>();
+
+  private void OnEnable()
   {
-    public event UnityAction<Vector2> Move = delegate { };
-    public event UnityAction<Vector2, bool> Look = delegate { };
-    public event UnityAction EnableMouseControlCamera = delegate { };
-    public event UnityAction DisableMouseControlCamera = delegate { };
-
-    private Controls controls;
-
-    public Vector3 Direction => controls.Player.Move.ReadValue<Vector2>();
-
-    private void OnEnable()
+    if (controls == null)
     {
-      if(controls == null)
-      {
-        controls = new Controls();
-        controls.Player.SetCallbacks(this);
-      }
+      controls = new Controls();
+      controls.Player.SetCallbacks(this);
     }
+  }
 
-    public void EnablePlayerActions()
+  public void EnablePlayerActions()
+  {
+    controls.Enable();
+  }
+
+  public void OnMove(InputAction.CallbackContext context)
+  {
+    Move.Invoke(context.ReadValue<Vector2>());
+  }
+
+  public void OnJump(InputAction.CallbackContext context)
+  {
+    switch (context.phase) 
     {
-      controls.Enable();
+      case InputActionPhase.Started:
+        Jump.Invoke();
+        break;
     }
+  }
 
-    public void OnMove(InputAction.CallbackContext context)
+  public void OnSlide(InputAction.CallbackContext context)
+  {
+    switch (context.phase) 
     {
-      Move.Invoke(context.ReadValue<Vector2>());
+      case InputActionPhase.Started:
+        Slide.Invoke(true); 
+        break;
+      case InputActionPhase.Canceled: 
+        Slide.Invoke(false); 
+        break;
     }
+  }
 
-    public void OnRun(InputAction.CallbackContext context)
+  public void OnLook(InputAction.CallbackContext context)
+  {
+    Look.Invoke(context.ReadValue<Vector2>(), IsDeviceMouse(context));
+  }
+  private bool IsDeviceMouse(InputAction.CallbackContext context) => context.control.device.name == "Mouse";
+
+  public void OnLeftClick(InputAction.CallbackContext context)
+  {
+    switch (context.phase)
     {
-      // noop
+      case InputActionPhase.Performed:
+        LeftClick.Invoke();
+        break;
     }
+  }
 
-    public void OnJump(InputAction.CallbackContext context)
+  public void OnRightClick(InputAction.CallbackContext context)
+  {
+    switch (context.phase)
     {
-      // noop
-    }
-
-    public void OnLook(InputAction.CallbackContext context)
-    {
-      Look.Invoke(context.ReadValue<Vector2>(), IsDeviceMouse(context));
-    }
-    private bool IsDeviceMouse(InputAction.CallbackContext context) => context.control.device.name == "Mouse";
-
-    public void OnMouseControlCamera(InputAction.CallbackContext context)
-    {
-      switch(context.phase)
-      {
-        case InputActionPhase.Started:
-          EnableMouseControlCamera.Invoke(); 
-          break;
-        case InputActionPhase.Canceled: 
-          DisableMouseControlCamera.Invoke(); 
-          break;
-      }
-    }
-
-    public void OnFire(InputAction.CallbackContext context)
-    {
-      // noop
+      case InputActionPhase.Performed:
+        RightClick.Invoke();
+        break;
     }
   }
 }
