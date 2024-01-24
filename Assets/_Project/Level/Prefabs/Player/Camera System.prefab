@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 1425476571534324684}
   - component: {fileID: 1425476571534324675}
   - component: {fileID: 1425476571534324674}
+  - component: {fileID: 4676978331868773786}
   - component: {fileID: 1425476571534324686}
   - component: {fileID: 1425476571534324685}
   m_Layer: 0
@@ -130,20 +131,72 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxDistance: 100
   muzzle: {fileID: 1425476571382987254}
-  launchSpeed: 25
-  launchDistance: 10
-  maxJointDistance: 0.8
-  minJointDistance: 0.25
-  jointSpring: 4.5
-  jointDamper: 7
-  jointMassScale: 4.5
+  predictionSphereCastRadius: 4.5
+  predictionPointObject: {fileID: 6138715947400637180, guid: 82b7945d72e80504181e543cc5d40035,
+    type: 3}
+  grapple:
+    delayTime: 0.25
+    cooldown: 1
+    cooldownTimer: 0
+    isGrappling: 0
+    overShootYAxis: 2.5
+  swing:
+    jointMaxDistance: 0.8
+    jointMinDistance: 0.25
+    jointSpring: 4.5
+    jointDamper: 7
+    jointMassScale: 4.5
+    joint: {fileID: 0}
+    isSwinging: 0
   whatIsGrappleable:
     serializedVersion: 2
     m_Bits: 512
+  playerController: {fileID: 0}
   input: {fileID: 0}
-  player: {fileID: 0}
-  playerRigidbody: {fileID: 0}
   cam: {fileID: 0}
+--- !u!114 &4676978331868773786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425476571534324672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 883318788e325ca4d90dce8b564a7455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quality: 500
+  damper: 14
+  strength: 800
+  velocity: 15
+  waveCount: 3
+  waveHeight: 1
+  affectCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.5417428
+      outSlope: 3.5417428
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.091946065
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  grapplingGun: {fileID: 0}
   lineRenderer: {fileID: 0}
 --- !u!114 &1425476571534324686
 MonoBehaviour:
@@ -565,7 +618,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1425476572649884738}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.705846, y: -0.45278144, z: -1.1648669}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

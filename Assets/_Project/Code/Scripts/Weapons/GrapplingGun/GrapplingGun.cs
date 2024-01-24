@@ -1,165 +1,253 @@
+using System;
 using UnityEngine;
 
 public class GrapplingGun : MonoBehaviour
 {
   [Header("Weapon Config")]
-  [SerializeField] private float maxDistance = 100f;
-  [SerializeField] private Transform muzzle;
+  [SerializeField] private float maxDistance;
+  public Transform muzzle;
 
-  [Header("Grapple Config")]
-  [SerializeField] private float launchSpeed = 0.5f;
-  [SerializeField] private float launchDistance = 3f;
-  [SerializeField] private float maxJointDistance = 0.8f;
-  [SerializeField] private float minJointDistance = 0.25f;
-  [SerializeField] private float jointSpring = 4.5f;
-  [SerializeField] private float jointDamper = 7f;
-  [SerializeField] private float jointMassScale = 4.5f;
+  [Header("Prediction")]
+  [SerializeField] private RaycastHit predictionHit;
+  [SerializeField] private float predictionSphereCastRadius;
+  [SerializeField] private GameObject predictionPointObject;
+
+  [Space(15)]
+
+  public Grapple grapple;
+  public Swing swing;
 
   [Space(15)]
 
   [SerializeField] private LayerMask whatIsGrappleable;
 
   [Header("References")]
+  [SerializeField] private PlayerController playerController;
   [SerializeField] private InputManager input;
-  [SerializeField] private Transform player;
-  [SerializeField] private Rigidbody playerRigidbody;
   [SerializeField] private Transform cam;
-  [SerializeField] private LineRenderer lineRenderer;
 
   public Vector3 grapplePoint { get; private set; }
-  private SpringJoint joint;
-
-  bool isLaunching = false;
+  private Transform predictionPoint;
 
   private void Awake()
   {
-    input = player.GetComponent<PlayerController>().Input;
-    playerRigidbody = player.GetComponent<Rigidbody>();
+    input = playerController.Input;
+
+    playerController.grapplingGun = this;
 
     cam = Camera.main.transform;
-
-    lineRenderer = GetComponent<LineRenderer>();
-    lineRenderer.positionCount = 0;
   }
 
   private void OnEnable()
   {
-    input.LeftClick += Shot;
-    input.RightClick += Launch;
+    input.RightClick += HandleGrapple;
+    input.LeftClick += HandleSwing;
   }
 
   private void OnDisable()
   {
-    input.LeftClick -= Shot;
-    input.RightClick -= Launch;
+    input.RightClick -= HandleGrapple;
+    input.LeftClick += HandleSwing;
   }
 
-  private void LateUpdate()
+  private void Start()
   {
-    DrawGrappleRope();
+    predictionPoint = Instantiate(predictionPointObject, transform.position, transform.rotation).transform;
+    predictionPoint.gameObject.SetActive(false);
   }
-  
+
   private void Update()
   {
-    if (isLaunching)
-    {
-      LaunchGrapple();
-    }
+    if(grapple.cooldownTimer > 0)
+      grapple.cooldownTimer -= Time.deltaTime;
+
+    CheckForSwingPoints();
   }
 
   /// <summary>
-  /// Adds force to the player in the direction of the current grapple point
+  /// Starts the grapple hook when input has been detected
   /// </summary>
-  private void LaunchGrapple()
+  /// <param name="isDown"> bool - whether right click is pressed or released </param>
+  private void HandleGrapple(bool isDown)
   {
-    Vector3 direction = grapplePoint - player.position;
-    playerRigidbody.AddRelativeForce(direction.normalized * launchSpeed, ForceMode.Force);
-
-    if (Vector3.Distance(player.position, grapplePoint) < launchDistance)
-    {
-      isLaunching = false;
-      StopGrapple();
-    }
-  }
-
-  /// <summary>
-  /// Starts/Stops the grapple gun
-  /// </summary>
-  /// <param name="isDown">bool - whether the mouse button is pressed or released</param>
-  private void Shot(bool isDown)
-  {
-    if(isDown && !IsGrappling())
+    if(isDown)
     {
       StartGrapple();
-    } 
-    else
-    {
-      StopGrapple();
     }
   }
 
   /// <summary>
-  /// Hooks the player onto the closest raycast hit with the "whatIsGrappleable" layer
+  /// Starts and Stops the Swing when input has been detected
+  /// </summary>
+  /// <param name="isDown"> bool - whether right click is pressed or released </param>
+  private void HandleSwing(bool isDown)
+  {
+    if(isDown && !swing.isSwinging)
+    {
+      StartSwinging();
+    } else
+    {
+      StopSwinging();
+    }
+  }
+
+  /// <summary>
+  /// Starts the grapple - freeze the player in place and execute the next stage for the grapple
   /// </summary>
   private void StartGrapple()
   {
-    RaycastHit hit;
-    if(Physics.Raycast(cam.position, cam.forward, out hit, maxDistance, whatIsGrappleable)) 
-    { 
-      grapplePoint = hit.point;
-      joint = player.gameObject.AddComponent<SpringJoint>();
-      joint.autoConfigureConnectedAnchor = false;
-      joint.connectedAnchor = grapplePoint;
+    if (grapple.cooldownTimer > 0) return;
 
-      float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
+    grapple.isGrappling = true;
 
-      joint.maxDistance = distanceFromPoint * maxJointDistance;
-      joint.minDistance = distanceFromPoint * minJointDistance;
+    playerController.freeze = true;
 
-      joint.spring = jointSpring;
-      joint.damper = jointDamper;
-      joint.massScale = jointMassScale;
+    if (predictionHit.point == Vector3.zero)
+    {
+      grapplePoint = cam.position + cam.forward * maxDistance;
+      Invoke(nameof(StopGrapple), grapple.delayTime);
+    }
+    else
+    {
+      grapplePoint = predictionHit.point;
 
-      lineRenderer.positionCount = 2;
+      Invoke(nameof(ExecuteGrapple), grapple.delayTime);
     }
   }
 
   /// <summary>
-  /// Draws a line renderer from the muzzle of the gun to the grapple point
+  /// Executes the grapple - Launches the player towards the grapple point
   /// </summary>
-  private void DrawGrappleRope()
+  private void ExecuteGrapple()
   {
-    if (!IsGrappling()) return;
+    playerController.freeze = false;
 
-    lineRenderer.SetPosition(0, muzzle.position);
-    lineRenderer.SetPosition(1, grapplePoint);
+    Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
+
+    float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
+    float hightestPointOnArc = grapplePointRelativeYPos + grapple.overShootYAxis;
+
+    if(grapplePointRelativeYPos < 0) hightestPointOnArc = grapple.overShootYAxis;
+
+    playerController.JumpToPosition(grapplePoint, hightestPointOnArc);
+
+    Invoke(nameof(StopGrapple), 1f);
   }
 
   /// <summary>
-  /// Removes the spring joint and hides the LineRenderer
+  /// Stops the grapple - Unfreezes the player movement and resets the grapple
   /// </summary>
   private void StopGrapple()
   {
-    if (!IsGrappling()) return;
+    grapple.isGrappling = false;
 
-    lineRenderer.positionCount = 0;
-    Destroy(joint);
+    playerController.freeze = false;
+
+    grapple.cooldownTimer = grapple.cooldown;
   }
 
   /// <summary>
-  /// Launches the player
+  /// Starts the swing - attaches a spring joint betweem the player and grapple point allowing the player to swing around
   /// </summary>
-  /// <param name="isDown">bool - whether the mouse button is pressed or released</param>
-  private void Launch(bool isDown)
+  private void StartSwinging()
   {
-    if(isDown && IsGrappling())
-    {
-      isLaunching = true;
-    }
+    // return if predictionHit not found
+    if(predictionHit.point == Vector3.zero) return;
+
+    swing.isSwinging = true;
+
+    grapplePoint = predictionHit.point;
+    swing.joint = playerController.gameObject.AddComponent<SpringJoint>();
+    swing.joint.autoConfigureConnectedAnchor = false;
+    swing.joint.connectedAnchor = grapplePoint;
+
+    float distanceFromPoint = Vector3.Distance(playerController.transform.position, grapplePoint);
+
+    swing.joint.maxDistance = distanceFromPoint * swing.jointMaxDistance;
+    swing.joint.minDistance = distanceFromPoint * swing.jointMinDistance;
+
+    swing.joint.spring = swing.jointSpring;
+    swing.joint.damper = swing.jointDamper;
+    swing.joint.massScale = swing.jointMassScale;
   }
 
-  public bool IsGrappling()
+  /// <summary>
+  /// Stops the swing - destroys the spring joint attached between the player and grapple point
+  /// </summary>
+  private void StopSwinging()
   {
-    return joint != null;
+    swing.isSwinging = false;
+    Destroy(swing.joint);
   }
+
+  /// <summary>
+  /// Creates a prediction for where the player grapples/swings - if the player isnt directly aiming at a grappleable point spherecast to find the nearest grapple point
+  /// </summary>
+  private void CheckForSwingPoints()
+  {
+    if (swing.isSwinging) return;
+
+    RaycastHit sphereCastHit;
+    Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward, out sphereCastHit, maxDistance, whatIsGrappleable);
+
+    RaycastHit raycastHit;
+    Physics.Raycast(cam.position, cam.forward, out raycastHit, maxDistance, whatIsGrappleable);
+
+    Vector3 realHitPoint;
+
+    // Option 1 - Direct Hit
+    if (raycastHit.point != Vector3.zero)
+      realHitPoint = raycastHit.point;
+
+    // Option 2 - Indirect (predicted) Hit
+    else if (sphereCastHit.point != Vector3.zero)
+      realHitPoint = sphereCastHit.point;
+
+    // Option 3 - Miss
+    else
+      realHitPoint = Vector3.zero;
+
+    // realHitPoint found
+    if (realHitPoint != Vector3.zero)
+    {
+      predictionPoint.gameObject.SetActive(true);
+      predictionPoint.position = realHitPoint;
+    }
+    // realHitPoint not found
+    else
+    {
+      predictionPoint.gameObject.SetActive(false);
+    }
+
+    predictionHit = raycastHit.point == Vector3.zero ? sphereCastHit : raycastHit;
+  }
+}
+
+[System.Serializable]
+public class Grapple
+{
+  public float delayTime;
+
+  [Space(10)]
+
+  public float cooldown;
+  [HideInInspector] public float cooldownTimer;
+
+  [Space(10)]
+
+  [HideInInspector] public bool isGrappling;
+  public float overShootYAxis;
+}
+
+[System.Serializable]
+public class Swing
+{
+  public float jointMaxDistance = 0.8f;
+  public float jointMinDistance = 0.25f;
+  public float jointSpring = 4.5f;
+  public float jointDamper = 7f;
+  public float jointMassScale = 4.5f;
+
+  [HideInInspector] public SpringJoint joint;
+  [HideInInspector] public bool isSwinging;
 }

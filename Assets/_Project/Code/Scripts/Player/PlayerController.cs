@@ -34,6 +34,10 @@ public class PlayerController : MonoBehaviour
   // Getters & Setters
   public InputManager Input => input;
 
+  public bool freeze { get; set; }
+
+  public GrapplingGun grapplingGun {get;set;}
+
   // Camera variables
   private float sensMultiplier = 1f;
   private float deviceMultiplier;
@@ -70,6 +74,11 @@ public class PlayerController : MonoBehaviour
   private bool isGrounded;
   private bool cancellingGrounded;
 
+  // Grapple variables
+  private bool isGrapple;
+  private Vector3 velocityToSet;
+  private bool enableMovementOnNextTouch;
+
   private void OnEnable()
   {
     input.Jump += OnJump;
@@ -104,16 +113,25 @@ public class PlayerController : MonoBehaviour
 
   private void LateUpdate()
   {
-    if(isWallrunning) HandleWallRunning();
+    if (isGrapple) return;
+
+    if (isWallrunning) HandleWallRunning();
   }
 
   private void FixedUpdate()
   {
+    if (isGrapple) return;
+
     HandleMovement();
   }
 
   private void Update()
   {
+    if(freeze)
+    {
+      _rigidbody.velocity = Vector3.zero;
+    }
+
     HandleLook();
   }
 
@@ -438,6 +456,15 @@ public class PlayerController : MonoBehaviour
     }
   }
 
+  private void OnCollisionEnter(Collision other)
+  {
+    if(enableMovementOnNextTouch)
+    {
+      enableMovementOnNextTouch = false;
+      ResetRestrictions();
+    }
+  }
+
   private void OnCollisionStay(Collision other)
   {
     int layer = other.gameObject.layer;
@@ -504,5 +531,54 @@ public class PlayerController : MonoBehaviour
   private void StopSurf()
   {
     isSurfing = false;
+  }
+
+  /// <summary>
+  /// Launches the player towards the target position using trajectoryHeight
+  /// </summary>
+  /// <param name="targetPosition"> Vector3 - the grapple point </param>
+  /// <param name="trajectoryHeight"> float - calculated trajectory arc betweem the players current position and target position </param>
+  public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight)
+  {
+    isGrapple = true;
+
+    velocityToSet = CalculateJumpVelocity(transform.position, targetPosition, trajectoryHeight);
+    Invoke(nameof(SetVelocity), 0.1f);
+
+    Invoke(nameof(ResetRestrictions), 3f);
+  }
+
+  /// <summary>
+  /// Sets the players velocity to the calculated jump velocity
+  /// </summary>
+  private void SetVelocity()
+  {
+    enableMovementOnNextTouch = true;
+    _rigidbody.velocity = velocityToSet;
+  }
+
+  private void ResetRestrictions()
+  {
+    isGrapple = false;
+  }
+
+  /// <summary>
+  /// Calculates the jump velocity of the player between the startpoint and endpoint using calculatged trajectory using a kinematic equations.
+  /// </summary>
+  /// <param name="startPoint"> Vector3 - starting position of the player </param>
+  /// <param name="endPoint"> Vector3 - grapple point the player is targeting </param>
+  /// <param name="trajectoryHeight"> float - calculated trajectory arc between the start point and end point </param>
+  /// <returns> Vector3 - calculated jump velocity </returns>
+  private Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight)
+  {
+    float gravity = Physics.gravity.y;
+    float displacementY = endPoint.y - startPoint.y;
+    Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
+
+    Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
+    Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity)
+      + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
+
+    return velocityXZ + velocityY;
   }
 }
