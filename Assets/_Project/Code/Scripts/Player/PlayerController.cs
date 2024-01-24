@@ -28,15 +28,11 @@ public class PlayerController : MonoBehaviour
   [Header("References")]
   [SerializeField] private InputManager input;
   [SerializeField] private Rigidbody _rigidbody;
-  [SerializeField] private Collider _collider;
   [SerializeField] private Transform orientation;
   [SerializeField] private Transform cinemachineCam;
 
   // Getters & Setters
-  public InputManager Input
-  {
-    get { return input; }
-  }
+  public InputManager Input => input;
 
   // Camera variables
   private float sensMultiplier = 1f;
@@ -93,9 +89,6 @@ public class PlayerController : MonoBehaviour
   private void Awake()
   {
     _rigidbody = GetComponent<Rigidbody>();
-    _collider = GetComponent<Collider>();
-
-    cinemachineCam = FindObjectOfType<CinemachineVirtualCamera>().transform;
   }
 
   private void Start()

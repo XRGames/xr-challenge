@@ -17,7 +17,7 @@ public class GrapplingGun : MonoBehaviour
 
   [Space(15)]
 
-  public LayerMask whatIsGrappleable;
+  [SerializeField] private LayerMask whatIsGrappleable;
 
   [Header("References")]
   [SerializeField] private InputManager input;
@@ -26,21 +26,20 @@ public class GrapplingGun : MonoBehaviour
   [SerializeField] private Transform cam;
   [SerializeField] private LineRenderer lineRenderer;
 
-  [HideInInspector] public Vector3 grapplePoint { get; private set; }
+  public Vector3 grapplePoint { get; private set; }
   private SpringJoint joint;
 
   bool isLaunching = false;
 
   private void Awake()
   {
-    PlayerController controller = FindObjectOfType<PlayerController>();
-    input = controller.Input;
-    player = controller.transform;
-    playerRigidbody = controller.GetComponent<Rigidbody>();
+    input = player.GetComponent<PlayerController>().Input;
+    playerRigidbody = player.GetComponent<Rigidbody>();
 
     cam = Camera.main.transform;
 
     lineRenderer = GetComponent<LineRenderer>();
+    lineRenderer.positionCount = 0;
   }
 
   private void OnEnable()
@@ -59,24 +58,37 @@ public class GrapplingGun : MonoBehaviour
   {
     DrawGrappleRope();
   }
+  
   private void Update()
   {
     if (isLaunching)
     {
-      Vector3 direction = grapplePoint - player.position;
-      playerRigidbody.AddRelativeForce(direction.normalized * launchSpeed, ForceMode.Force);
-
-      if (Vector3.Distance(player.position, grapplePoint) < launchDistance)
-      {
-        isLaunching = false;
-        StopGrapple();
-      }
+      LaunchGrapple();
     }
   }
 
+  /// <summary>
+  /// Adds force to the player in the direction of the current grapple point
+  /// </summary>
+  private void LaunchGrapple()
+  {
+    Vector3 direction = grapplePoint - player.position;
+    playerRigidbody.AddRelativeForce(direction.normalized * launchSpeed, ForceMode.Force);
+
+    if (Vector3.Distance(player.position, grapplePoint) < launchDistance)
+    {
+      isLaunching = false;
+      StopGrapple();
+    }
+  }
+
+  /// <summary>
+  /// Starts/Stops the grapple gun
+  /// </summary>
+  /// <param name="isDown">bool - whether the mouse button is pressed or released</param>
   private void Shot(bool isDown)
   {
-    if(isDown)
+    if(isDown && !IsGrappling())
     {
       StartGrapple();
     } 
@@ -86,6 +98,9 @@ public class GrapplingGun : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Hooks the player onto the closest raycast hit with the "whatIsGrappleable" layer
+  /// </summary>
   private void StartGrapple()
   {
     RaycastHit hit;
@@ -109,14 +124,20 @@ public class GrapplingGun : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Draws a line renderer from the muzzle of the gun to the grapple point
+  /// </summary>
   private void DrawGrappleRope()
   {
-    if (!joint) return;
+    if (!IsGrappling()) return;
 
     lineRenderer.SetPosition(0, muzzle.position);
     lineRenderer.SetPosition(1, grapplePoint);
   }
 
+  /// <summary>
+  /// Removes the spring joint and hides the LineRenderer
+  /// </summary>
   private void StopGrapple()
   {
     if (!IsGrappling()) return;
@@ -125,14 +146,15 @@ public class GrapplingGun : MonoBehaviour
     Destroy(joint);
   }
 
+  /// <summary>
+  /// Launches the player
+  /// </summary>
+  /// <param name="isDown">bool - whether the mouse button is pressed or released</param>
   private void Launch(bool isDown)
   {
-    if(isDown)
+    if(isDown && IsGrappling())
     {
-      if(IsGrappling())
-      {
-        isLaunching = true;
-      }
+      isLaunching = true;
     }
   }
 
