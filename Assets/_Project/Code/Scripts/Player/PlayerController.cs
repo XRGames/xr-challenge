@@ -32,6 +32,12 @@ public class PlayerController : MonoBehaviour
   [SerializeField] private Transform orientation;
   [SerializeField] private Transform cinemachineCam;
 
+  // Getters & Setters
+  public InputManager Input
+  {
+    get { return input; }
+  }
+
   // Camera variables
   private float sensMultiplier = 1f;
   private float deviceMultiplier;
@@ -62,7 +68,6 @@ public class PlayerController : MonoBehaviour
   private float actualWallRotation;
   private float wallRunRotation;
   private float wallRotationVel;
-  private bool onWall;
   private bool cancellingWall;
 
   // Grounded variables
@@ -464,7 +469,6 @@ public class PlayerController : MonoBehaviour
       if (IsWall(normal) && layer == LayerMask.NameToLayer("Ground"))
       {
         StartWallRun(normal);
-        onWall = true;
         cancellingWall = false;
         CancelInvoke("StopWall");
       }
@@ -501,7 +505,6 @@ public class PlayerController : MonoBehaviour
 
   private void StopWall()
   {
-    onWall = false;
     isWallrunning = false;
   }
 

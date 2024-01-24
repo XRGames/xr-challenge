@@ -10,8 +10,8 @@ public class InputManager : ScriptableObject, IPlayerActions
   public event UnityAction Jump = delegate { };
   public event UnityAction<bool> Slide = delegate { };
   public event UnityAction<Vector2, bool> Look = delegate { };
-  public event UnityAction LeftClick = delegate { };
-  public event UnityAction RightClick = delegate { };
+  public event UnityAction<bool> LeftClick = delegate { };
+  public event UnityAction<bool> RightClick = delegate { };
 
   private Controls controls;
 
@@ -70,8 +70,11 @@ public class InputManager : ScriptableObject, IPlayerActions
   {
     switch (context.phase)
     {
-      case InputActionPhase.Performed:
-        LeftClick.Invoke();
+      case InputActionPhase.Started:
+        LeftClick.Invoke(true);
+        break;
+      case InputActionPhase.Canceled:
+        LeftClick.Invoke(false);
         break;
     }
   }
@@ -80,8 +83,11 @@ public class InputManager : ScriptableObject, IPlayerActions
   {
     switch (context.phase)
     {
-      case InputActionPhase.Performed:
-        RightClick.Invoke();
+      case InputActionPhase.Started:
+        RightClick.Invoke(true);
+        break;
+      case InputActionPhase.Canceled:
+        RightClick.Invoke(false);
         break;
     }
   }
