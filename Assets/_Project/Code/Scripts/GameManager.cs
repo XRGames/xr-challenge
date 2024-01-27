@@ -3,6 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+  [Header("Config")]
+  [SerializeField] private string winScene;
+  [SerializeField] private string lossScene;
+
   [Header("References")]
   [SerializeField] private WinHandler winHandler;
 
@@ -18,6 +22,11 @@ public class GameManager : MonoBehaviour
 
   private void OnWin()
   {
-    SceneManager.LoadScene("WinScene"); 
+    SceneManager.LoadScene(winScene); 
+  }
+
+  private void OnLoss()
+  {
+    SceneManager.LoadScene(lossScene);
   }
 }
