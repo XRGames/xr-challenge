@@ -1,4 +1,3 @@
-using Cinemachine;
 using System;
 using UnityEngine;
 
@@ -29,7 +28,6 @@ public class PlayerController : MonoBehaviour
   [SerializeField] private InputManager input;
   [SerializeField] private Rigidbody _rigidbody;
   [SerializeField] private Transform orientation;
-  [SerializeField] private Transform cinemachineCam;
 
   // Getters & Setters
   public InputManager Input => input;
@@ -37,12 +35,6 @@ public class PlayerController : MonoBehaviour
   public bool freeze { get; set; }
 
   public GrapplingGun grapplingGun {get;set;}
-
-  // Camera variables
-  private float sensMultiplier = 1f;
-  private float deviceMultiplier;
-  private float desiredX;
-  private float xRotation;
 
   // Moving variables
   private float x, y;
@@ -83,16 +75,12 @@ public class PlayerController : MonoBehaviour
   {
     input.Jump += OnJump;
     input.Slide += OnSlide;
-
-    input.Look += OnLook;
   }
 
   private void OnDisable()
   {
     input.Jump -= OnJump;
     input.Slide -= OnSlide;
-
-    input.Look -= OnLook;
   }
 
   private void Awake()
@@ -103,9 +91,6 @@ public class PlayerController : MonoBehaviour
   private void Start()
   {
     input.EnablePlayerActions();
-
-    Cursor.lockState = CursorLockMode.Locked;
-    Cursor.visible = false;
 
     readyToJump = true;
     wallNormalVector = Vector3.up;
@@ -131,8 +116,6 @@ public class PlayerController : MonoBehaviour
     {
       _rigidbody.velocity = Vector3.zero;
     }
-
-    HandleLook();
   }
 
   /// <summary>
@@ -279,7 +262,7 @@ public class PlayerController : MonoBehaviour
       return;
     }
 
-    float current_cam_y = cinemachineCam.transform.rotation.eulerAngles.y;
+    float current_cam_y = Camera.main.transform.rotation.eulerAngles.y;
     float signed_angle = Vector3.SignedAngle(new Vector3(0f, 0f, 1f), wallNormalVector, Vector3.up);
     float wall_distance = Mathf.DeltaAngle(current_cam_y, signed_angle);
     wallRunRotation = (0f - wall_distance / 90f) * 15f;
@@ -301,32 +284,6 @@ public class PlayerController : MonoBehaviour
       isCancelling = false;
       CancelInvoke("CancelWallrun");
     }
-  }
-
-  /// <summary>
-  /// Sets the device multiplier depending on whether the player is using a mouse or gamepad
-  /// </summary>
-  private void OnLook(Vector2 cameraMovement, bool isDeviceMouse)
-  {
-    // If device is mouse use fixedDeltaTime, otherwise use deltaTime
-    deviceMultiplier = isDeviceMouse ? Time.fixedDeltaTime : Time.deltaTime * 25;
-  }
-
-  /// <summary>
-  /// Handles the players look direction
-  /// </summary>
-  private void HandleLook()
-  {
-    Vector3 cameraMovement = new Vector3(input.Mouse.x, input.Mouse.y, 0);
-    cameraMovement *= sensitivity * deviceMultiplier * sensMultiplier;
-
-    desiredX = cinemachineCam.transform.localRotation.eulerAngles.y + cameraMovement.x;
-    xRotation -= cameraMovement.y;
-    xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-    FindWallRunRotation();
-    actualWallRotation = Mathf.SmoothDamp(actualWallRotation, wallRunRotation, ref wallRotationVel, 0.2f);
-    cinemachineCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, actualWallRotation);
-    orientation.transform.localRotation = Quaternion.Euler(0f, desiredX, 0f);
   }
 
   private void ResetJump()

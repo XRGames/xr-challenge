@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GrapplingGun : MonoBehaviour
 {
@@ -24,7 +24,7 @@ public class GrapplingGun : MonoBehaviour
   [Header("References")]
   [SerializeField] private PlayerController playerController;
   [SerializeField] private InputManager input;
-  [SerializeField] private Transform cam;
+  [SerializeField] private Camera cam;
 
   public Vector3 grapplePoint { get; private set; }
   private Transform predictionPoint;
@@ -35,7 +35,7 @@ public class GrapplingGun : MonoBehaviour
 
     playerController.grapplingGun = this;
 
-    cam = Camera.main.transform;
+    cam = Camera.main;
   }
 
   private void OnEnable()
@@ -104,7 +104,7 @@ public class GrapplingGun : MonoBehaviour
 
     if (predictionHit.point == Vector3.zero)
     {
-      grapplePoint = cam.position + cam.forward * maxDistance;
+      grapplePoint = cam.transform.position + cam.transform.forward * maxDistance;
       Invoke(nameof(StopGrapple), grapple.delayTime);
     }
     else
@@ -187,11 +187,13 @@ public class GrapplingGun : MonoBehaviour
   {
     if (swing.isSwinging) return;
 
+    Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+
     RaycastHit sphereCastHit;
-    Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward, out sphereCastHit, maxDistance, whatIsGrappleable);
+    Physics.SphereCast(ray, predictionSphereCastRadius, out sphereCastHit, maxDistance, whatIsGrappleable);
 
     RaycastHit raycastHit;
-    Physics.Raycast(cam.position, cam.forward, out raycastHit, maxDistance, whatIsGrappleable);
+    Physics.Raycast(ray, out raycastHit, maxDistance, whatIsGrappleable);
 
     Vector3 realHitPoint;
 
