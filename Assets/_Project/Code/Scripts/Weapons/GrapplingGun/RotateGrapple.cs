@@ -17,14 +17,15 @@ public class RotateGrapple : MonoBehaviour
 
   private void Update()
   {
-    //if (!grapple.IsGrappling())
-    //{
-    //  desiredRotation = transform.parent.rotation;
-    //} else
-    //{
-    //  desiredRotation = Quaternion.LookRotation(grapple.grapplePoint - transform.position);
-    //}
+    if (grapple.grapple.isGrappling || grapple.swing.isSwinging)
+    {
+      desiredRotation = Quaternion.LookRotation(grapple.grapplePoint - transform.position);
+    }
+    else
+    {
+      desiredRotation = transform.parent.rotation;
+    }
 
-    //transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSpeed);
+    transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSpeed);
   }
 }

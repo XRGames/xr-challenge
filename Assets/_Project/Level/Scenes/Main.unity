@@ -1299,42 +1299,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d87491f346c74d40bd27a38f4c698ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &629281598 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1425476572595709834, guid: e12fd65bf9b6e3348b03232ff6c341cd,
-    type: 3}
-  m_PrefabInstance: {fileID: 1425476572345758116}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &629281599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 629281598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 1
-  m_IgnoreTag: 
-  m_TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_MinimumDistanceFromTarget: 0.1
-  m_AvoidObstacles: 1
-  m_DistanceLimit: 0
-  m_MinimumOcclusionTime: 0
-  m_CameraRadius: 0.1
-  m_Strategy: 1
-  m_MaximumEffort: 4
-  m_SmoothingTime: 0
-  m_Damping: 0
-  m_DampingWhenOccluded: 0
-  m_OptimalTargetDistance: 0
 --- !u!1 &817517603
 GameObject:
   m_ObjectHideFlags: 0
@@ -2175,14 +2139,14 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1425476571534324674, guid: e12fd65bf9b6e3348b03232ff6c341cd,
         type: 3}
+      propertyPath: movingObjectTag
+      value: MovingObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 1425476571534324674, guid: e12fd65bf9b6e3348b03232ff6c341cd,
+        type: 3}
       propertyPath: playerController
       value: 
       objectReference: {fileID: 560667143}
-    - target: {fileID: 1425476571534324674, guid: e12fd65bf9b6e3348b03232ff6c341cd,
-        type: 3}
-      propertyPath: grapple.overShootYAxis
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 1425476572649884738, guid: e12fd65bf9b6e3348b03232ff6c341cd,
         type: 3}
       propertyPath: m_Name

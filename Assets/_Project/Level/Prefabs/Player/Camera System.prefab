@@ -26,11 +26,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1521281074}
   m_LocalRotation: {x: 0.16606528, y: -0, z: -0, w: 0.9861148}
-  m_LocalPosition: {x: 0, y: -0.233, z: -0.213}
-  m_LocalScale: {x: 0.15, y: 0.5, z: 0.15}
+  m_LocalPosition: {x: 0, y: -0.9319999, z: -0.2840001}
+  m_LocalScale: {x: 0.6, y: 1.6467177, z: 0.21540406}
   m_Children:
   - {fileID: 1893055131}
-  m_Father: {fileID: 1425476572824166473}
+  m_Father: {fileID: 1425476571534324673}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 19.118, y: 0, z: 0}
 --- !u!33 &1521281077
@@ -177,6 +177,7 @@ Transform:
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.75}
   m_Children:
   - {fileID: 1425476571382987254}
+  - {fileID: 1521281075}
   m_Father: {fileID: 1425476572824166473}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -247,6 +248,8 @@ MonoBehaviour:
   predictionSphereCastRadius: 4.5
   predictionPointObject: {fileID: 6138715947400637180, guid: 82b7945d72e80504181e543cc5d40035,
     type: 3}
+  movingObject: {fileID: 0}
+  movingObjectTag: 
   grapple:
     delayTime: 0.25
     cooldown: 1
@@ -267,6 +270,7 @@ MonoBehaviour:
   playerController: {fileID: 0}
   input: {fileID: 0}
   cam: {fileID: 0}
+  lineRenderer: {fileID: 0}
 --- !u!114 &4676978331868773786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -860,7 +864,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1425476571534324673}
-  - {fileID: 1521281075}
   m_Father: {fileID: 1425476572572130638}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
