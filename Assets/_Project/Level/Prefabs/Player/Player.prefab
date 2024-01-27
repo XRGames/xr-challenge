@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 6101162426780155267}
   - component: {fileID: 6101162426780155276}
   - component: {fileID: 7015856041337370181}
+  - component: {fileID: 3793081239967774830}
   - component: {fileID: 6101162426780155277}
   - component: {fileID: 6101162426780155278}
   m_Layer: 0
@@ -160,6 +161,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28266f085e9433d448f15e7891463316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreText: {fileID: 0}
+--- !u!114 &3793081239967774830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6101162426780155279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e1883f7de7cf444eb9b146c08fb33c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalToCollect: 5
+  pickupHandler: {fileID: 0}
 --- !u!136 &6101162426780155277
 CapsuleCollider:
   m_ObjectHideFlags: 0

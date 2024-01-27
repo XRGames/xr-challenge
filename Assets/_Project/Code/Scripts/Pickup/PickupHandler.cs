@@ -9,6 +9,9 @@ public class PickupHandler : MonoBehaviour
   private int score = 0;
   public int Score => score;
 
+  private int collected = 0;
+  public int Collected => collected;
+
   private void Update()
   {
     scoreText.text = "SCORE: " + score;
@@ -19,6 +22,7 @@ public class PickupHandler : MonoBehaviour
     if (c.CompareTag("Pickup"))
     {
       score += c.GetComponent<Pickup>().GetPickedUp();
+      collected++;
     }
   }
 }
