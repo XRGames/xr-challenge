@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class WinHandler : MonoBehaviour
+public class TriggerHandler : MonoBehaviour
 {
   public event UnityAction Win = delegate { };
+  public event UnityAction Loss = delegate { };
 
   [Header("Config")]
   [SerializeField] private int totalToCollect = 5;
@@ -24,6 +25,10 @@ public class WinHandler : MonoBehaviour
       {
         Win.Invoke();
       }
+    } 
+    else if (c.CompareTag("Killbox"))
+    {
+      Loss.Invoke();
     }
   }
 }

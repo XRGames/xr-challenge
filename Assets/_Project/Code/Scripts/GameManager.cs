@@ -8,16 +8,18 @@ public class GameManager : MonoBehaviour
   [SerializeField] private string lossScene;
 
   [Header("References")]
-  [SerializeField] private WinHandler winHandler;
+  [SerializeField] private TriggerHandler triggerHandler;
 
   private void OnEnable()
   {
-    winHandler.Win += OnWin;
+    triggerHandler.Win += OnWin;
+    triggerHandler.Loss += OnLoss;
   }
 
   private void OnDisable()
   {
-    winHandler.Win -= OnWin;
+    triggerHandler.Win -= OnWin;
+    triggerHandler.Loss -= OnLoss;
   }
 
   private void OnWin()
