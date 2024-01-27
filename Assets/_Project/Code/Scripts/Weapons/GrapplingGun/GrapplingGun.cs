@@ -47,7 +47,7 @@ public class GrapplingGun : MonoBehaviour
   private void OnDisable()
   {
     input.RightClick -= HandleGrapple;
-    input.LeftClick += HandleSwing;
+    input.LeftClick -= HandleSwing;
   }
 
   private void Start()
